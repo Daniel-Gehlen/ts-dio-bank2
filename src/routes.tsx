@@ -1,6 +1,6 @@
 // MainRoutes.tsx
 import React, { useContext } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import { AppContext } from './components/AppContext';
 import Conta from './pages/Conta';
 import ContaInfo from './pages/ContaInfo';
@@ -12,7 +12,11 @@ const MainRoutes = () => {
   return (
     <Routes>
       <Route path='/' element={<Home />} />
-      <Route path='/conta/:id' element={isLoggedIn ? <Conta /> : <Home />} />
+      <Route
+        path='/conta'
+        element={isLoggedIn ? <Conta /> : <Navigate to="/" />}
+      />
+      <Route path='/conta/:id' element={isLoggedIn ? <Conta /> : <Navigate to="/" />} />
       <Route path='/infoconta' element={<ContaInfo />} />
     </Routes>
   );
