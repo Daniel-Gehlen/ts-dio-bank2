@@ -1,12 +1,17 @@
 // login.tsx
 import { api } from "../api";
 
-export const login = async (email: string, password: string): Promise<boolean> => {
-    const data: any = await api;
+interface User {
+  email: string;
+  password: string;
+}
 
-    if (email !== data.email || password !== data.password) {
-        return false;
-    }
+export const login = async (user: User): Promise<boolean> => {
+  const data: any = await api;
 
-    return true;
+  if (user.email !== data.email || user.password !== data.password) {
+    return false;
+  }
+
+  return true;
 };

@@ -15,16 +15,17 @@ const Home = () => {
     const navigate = useNavigate();
 
     const validateUser = async (email: string, password: string) => {
-        const loggedIn = await login(email, password);
-
+        const loggedIn = await login({ email, password });
+    
         if (!loggedIn) {
             return alert('Email ou senha inválida');
         }
-
+    
         setIsLoggedIn(true);
         changeLocalStorage({ login: true });
         navigate('/conta/1');
     };
+    
 
     return (
         <Box padding="25px">
