@@ -1,61 +1,69 @@
-import { api } from '../api'; // Adicione esta linha no início do arquivo
+// Conta.tsx
+import { api } from '../api';
 import { Center, SimpleGrid, Spinner } from '@chakra-ui/react';
-import { useParams, useNavigate } from 'react-router-dom'; // Adicione esta linha
+import { useParams, useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import CardInfo from '../components/CardInfo';
 import { AppContext } from '../components/AppContext';
 
 interface UserData {
-    email: string;
-    password: string;
-    name: string;
-    balance: number;
-    id: string;
+  email: string;
+  password: string;
+  name: string;
+  balance: number;
+  id: string;
 }
 
 const Conta = () => {
-    const { id } = useParams();
-    const navigate = useNavigate(); // Adicione esta linha
-    const { isLoggedIn, userName } = useContext(AppContext);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { isLoggedIn, userName } = useContext(AppContext);
 
-    const [userData, setUserData] = useState<null | UserData>();
+  const [userData, setUserData] = useState<null | UserData>(null);
 
-    !isLoggedIn && navigate('/');
-
-    useEffect(() => {
-        const getData = async () => {
-            const data: any | UserData = await api;
-            setUserData(data);
-        };
-
-        getData();
-    }, []);
-
-    const actualData = new Date();
-
-    if (userData && id !== userData.id) {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Ajuste aqui para garantir que a resposta seja do tipo UserData
+        const data: any = await api;
+        setUserData(data as UserData);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        // Trate o erro de maneira apropriada, por exemplo, redirecione para a página de login
         navigate('/');
-    }
+      }
+    };
 
-    return (
-        <Center>
-            <SimpleGrid columns={2} spacing={8} paddingTop={16}>
-                {userData === undefined || userData === null ? (
-                    <Center>
-                        <Spinner size="xl" color="white" />
-                    </Center>
-                ) : (
-                    <>
-                        <CardInfo
-                            mainContent={`Bem-vinda ${userName ? userName : userData?.name}`}
-                            content={`${actualData.getDay()} / ${actualData.getMonth()} / ${actualData.getFullYear()} ${actualData.getHours()}:${actualData.getMinutes()}`}
-                        />
-                        <CardInfo mainContent="Saldo" content={`R$ ${userData.balance}`} />
-                    </>
-                )}
-            </SimpleGrid>
-        </Center>
-    );
+    if (!isLoggedIn) {
+      navigate('/');
+    } else {
+      fetchData();
+    }
+  }, [isLoggedIn, navigate]);
+
+  const formattedDate = userData
+    ? `${userData.email} / ${userData.name}`
+    : '';
+
+  return (
+    <Center>
+      <SimpleGrid columns={2} spacing={8} paddingTop={16}>
+        {userData === null ? (
+          <Center>
+            <Spinner size="xl" color="white" />
+          </Center>
+        ) : (
+          <>
+            <CardInfo
+              mainContent={`Bem-vinda ${userName ? userName : userData.name}`}
+              content={formattedDate}
+            />
+            <CardInfo mainContent="Saldo" content={`R$ ${userData.balance}`} />
+          </>
+        )}
+      </SimpleGrid>
+    </Center>
+  );
 };
 
 export default Conta;

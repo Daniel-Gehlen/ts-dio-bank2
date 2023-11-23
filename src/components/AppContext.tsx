@@ -5,24 +5,24 @@ interface IAppContext {
     user: string;
     isLoggedIn: boolean;
     setIsLoggedIn: (isLoggedIn: boolean) => void;
-    userName: string; // Adicione esta linha
+    userName: string; 
 }
 
 export const AppContext = createContext({} as IAppContext);
 
 export const AppContextProvider = ({ children }: any) => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    const [userName, setUserName] = useState<string>(''); // Adicione esta linha
-
-    const storage = getAllLocalStorage();
+    const [userName, setUserName] = useState<string>('');
 
     useEffect(() => {
-        if (storage) {
-            const { login, userName } = JSON.parse(storage); // Atualize para incluir userName
+        const storageData = getAllLocalStorage();
+
+        if (storageData) {
+            const { login, userName } = JSON.parse(storageData);
             setIsLoggedIn(login);
-            setUserName(userName); // Adicione esta linha
+            setUserName(userName);
         }
-    }, []);
+    }, []); 
 
     const user = 'nathally';
 
